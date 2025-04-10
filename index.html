@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LED Control</title>
+  <link rel="manifest" href="manifest.json" />
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js");
+    }
+
+    function toggleLED() {
+      fetch("http://192.168.4.1/led/toggle", { method: "POST" })
+        .then(() => updateStatus());
+    }
+
+    function updateStatus() {
+      fetch("http://192.168.4.1/status")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("status").textContent = "LED is " + (data.led === "on" ? "ON" : "OFF");
+        });
+    }
+
+    window.onload = updateStatus;
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 40px;
+    }
+    button {
+      font-size: 1.5em;
+      padding: 1em 2em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="status">LED is ...</h1>
+  <button onclick="toggleLED()">Toggle LED</button>
+</body>
+</html>
